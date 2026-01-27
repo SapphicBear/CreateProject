@@ -1,11 +1,11 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 drawBoilerPlate() {
     mkdir ./src/
     mkdir ./src/javascript/
     mkdir ./src/javascript/tests
     touch .gitignore ./src/index.html ./src/styles.css ./src/javascript/index.js
-    echo -e 'dist \n node_modules \n' >> .gitignore
+    echo -e 'dist \n node_modules \n' >>.gitignore
     echo '<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,7 +19,7 @@ drawBoilerPlate() {
 <body>
     
 </body>
-</html>' > ./src/index.html
+</html>' >./src/index.html
     echo 'const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
@@ -55,7 +55,7 @@ module.exports = {
             },
         ],
     },
-};' > webpack.common.cjs
+};' >webpack.common.cjs
     echo 'const { merge } = require("webpack-merge");
 const common = require("./webpack.common.cjs");
 
@@ -65,14 +65,14 @@ module.exports = merge(common, {
     devServer: {
         watchFiles: ["./src/index.html"],
     },
-});' > webpack.dev.cjs
+});' >webpack.dev.cjs
     echo 'const { merge } = require("webpack-merge");
 const common = require("./webpack.common.cjs");
 
 module.exports = merge(common, {
     mode: "production",
     devtool: "source-map",
-});' > webpack.prod.cjs
+});' >webpack.prod.cjs
 }
 
 npmStart() {
@@ -84,9 +84,9 @@ npmStart() {
     npm pkg set scripts.deploy="git subtree push --prefix dist origin gh-pages"
     npm pkg set main="./src/javascript/index.js"
     npm install -D webpack webpack-cli webpack-dev-server webpack-html-plugin webpack-merge
-    npm install -D html-loader style-loader css-loader 
+    npm install -D html-loader style-loader css-loader
     npm install -D jest
-    npm install -D @babel/core @babel/preset-env babel-jest 
+    npm install -D @babel/core @babel/preset-env babel-jest
 }
 
 main() {
