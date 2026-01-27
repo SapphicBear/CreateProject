@@ -1,0 +1,98 @@
+#!/bin/bash
+
+drawBoilerPlate() {
+    mkdir ./src/
+    mkdir ./src/javascript/
+    mkdir ./src/javascript/tests
+    touch .gitignore ./src/index.html ./src/styles.css ./src/javascript/index.js
+    echo -e 'dist \n node_modules \n' >> .gitignore
+    echo '<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./styles.css">
+    <script type="module" src="./javascript/index.js" defer>
+    </script>
+</head>
+<body>
+    
+</body>
+</html>' > ./src/index.html
+    echo 'const path = require("path");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+
+module.exports = {
+    entry: "./src/javascript/index.js",
+    output: {
+        filename: "main.js",
+        path: path.resolve(__dirname, "dist"),
+        clean: true,
+    },
+    plugins: [
+        new HtmlWebpackPlugin({
+            template: "./src/index.html",
+        }),
+    ],
+    module: {
+        rules: [
+            {
+                test: /\.css$/i,
+                use: ["style-loader", "css-loader"],
+            },
+            {
+                test: /\.html$/i,
+                loader: "html-loader",
+            },
+            {
+                test: /\.(png|svg|jpg|jpeg|gif)$/i,
+                type: "asset/resource",
+            },
+            {
+                test: /\.(woff|woff2|eot|ttf|otf)$/i,
+                type: "asset/resource",
+            },
+        ],
+    },
+};' > webpack.common.cjs
+    echo 'const { merge } = require("webpack-merge");
+const common = require("./webpack.common.cjs");
+
+module.exports = merge(common, {
+    mode: "development",
+    devtool: "eval-source-map",
+    devServer: {
+        watchFiles: ["./src/index.html"],
+    },
+});' > webpack.dev.cjs
+    echo 'const { merge } = require("webpack-merge");
+const common = require("./webpack.common.cjs");
+
+module.exports = merge(common, {
+    mode: "production",
+    devtool: "source-map",
+});' > webpack.prod.cjs
+}
+
+npmStart() {
+    npm init -y
+    npm pkg set type="module"
+    npm pkg set scripts.test="jest"
+    npm pkg set scripts.build="webpack --config webpack.prod.cjs"
+    npm pkg set scripts.dev="webpack serve --config webpack.dev.cjs"
+    npm pkg set scripts.deploy="git subtree push --prefix dist origin gh-pages"
+    npm pkg set main="./src/javascript/index.js"
+    npm install -D webpack webpack-cli webpack-dev-server webpack-html-plugin webpack-merge
+    npm install -D html-loader style-loader css-loader 
+    npm install -D jest
+    npm install -D @babel/core @babel/preset-env babel-jest 
+}
+
+main() {
+    echo "Running boilerplate script!"
+    drawBoilerPlate
+    echo "Running up npm and installing default packages..."
+    npmStart
+}
+main
