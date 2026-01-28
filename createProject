@@ -5,7 +5,7 @@ drawBoilerPlate() {
     mkdir ./src/javascript/
     mkdir ./src/javascript/tests
     touch .gitignore ./src/index.html ./src/styles.css ./src/javascript/index.js
-    echo -e 'dist \n node_modules \n' >>.gitignore
+    echo -e 'dist\nnode_modules\n' >.gitignore
     echo '<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -91,6 +91,10 @@ npmStart() {
 }
 
 main() {
+    if ! command -v npm 1>/dev/null; then
+        echo "npm not found, exiting..."
+        exit 1
+    fi
     echo "Running boilerplate script!"
     drawBoilerPlate
     echo "Running up npm and installing default packages..."
